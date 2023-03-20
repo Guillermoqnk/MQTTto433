@@ -264,6 +264,18 @@ void callback(char* topic, byte* payload, unsigned int length) {
           persianaTimer.attach(0.6,repitePersiana);
           //mySwitch.disableTransmit();
         }
+        
+        else if (!strcmp(topic, "persiana/wylli/set")){
+          if (!strncmp((char *)payload, "OPEN", length)) lastCode = 9865153;
+          else if (!strncmp((char *)payload, "CLOSE", length)) lastCode = 9865154;
+          else if (!strncmp((char *)payload, "STOP", length)) lastCode = 9865154;
+          //mySwitch.send(lastCode,24);
+          digitalWrite(EN_TX, HIGH);
+          tiempo_persiana = 10;
+          persianaTimer.attach(0.6, repitePersiana);
+          //mySwitch.disableTransmit();
+        }        
+        
           else if(!strcmp(topic,"home/alarm")){
             if(!strncmp((char *)payload,"armed_away",length)) lastCode=4422145; //Armado
              else if(!strncmp((char *)payload,"armed_home",length)) lastCode=4422146; //apaga
@@ -321,6 +333,8 @@ void reconnect() {
       clientMqtt.subscribe("persiana/salon/pos/#");
       clientMqtt.subscribe("persiana/habitacion/set/#");
       clientMqtt.subscribe("persiana/habitacion/pos/#");
+      clientMqtt.subscribe("persiana/wylli/set/#");
+      clientMqtt.subscribe("persiana/wylli/pos/#");
       clientMqtt.subscribe("home/alarm/#");
       clientMqtt.subscribe("pasillo/luz/set/#");
     } else {
